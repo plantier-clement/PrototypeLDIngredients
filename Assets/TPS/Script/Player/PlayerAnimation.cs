@@ -28,7 +28,10 @@ public class PlayerAnimation : MonoBehaviour {
 		animator.SetBool ("IsSprinting", GameManager.Instance.InputController.IsSprinting);
 		animator.SetBool ("IsCrouching", GameManager.Instance.InputController.IsCrouched);
 
-		animator.SetFloat ("AimAngle", PlayerAim.GetAngle ()	);
+		animator.SetFloat ("AimAngle", PlayerAim.GetAngle ());
+		animator.SetBool ("IsAiming", GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMING ||
+			GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING);
+
 
 	}
 }

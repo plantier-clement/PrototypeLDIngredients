@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(MoveController))]
+[RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerState))]
 
 public class Player : MonoBehaviour {
@@ -27,11 +27,11 @@ public class Player : MonoBehaviour {
 
 	private Vector3 previousPosition;
 
-	private MoveController m_MoveController;
-	public MoveController MoveController{
+	private CharacterController m_MoveController;
+	public CharacterController MoveController{
 		get{
 			if (m_MoveController == null)
-				m_MoveController = GetComponent <MoveController> ();
+				m_MoveController = GetComponent <CharacterController> ();
 			return m_MoveController;
 		}
 	}
@@ -81,7 +81,10 @@ public class Player : MonoBehaviour {
 			moveSpeed = crouchSpeed;
 
 		Vector2 direction = new Vector2 (playerInput.Vertical * moveSpeed, playerInput.Horizontal * moveSpeed);
-		MoveController.Move (direction);
+
+		MoveController.Move (transform.forward * direction.x * 0.02f + transform.right * direction.y * 0.02f);
+
+
 
 		if (Vector3.Distance(transform.position, previousPosition) > minimumMoveThreshold)
 			footsteps.Play ();

@@ -159,7 +159,47 @@ ModelImporter:
     9500000: //RootNode
     13700000: Soldier_body
     13700002: Soldier_head
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Soldier_body1
+    second: {fileID: 2100000, guid: a0390306db9508c46b1902dc2733a70a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Soldier_head6
+    second: {fileID: 2100000, guid: 1dc5b023e4b0a7947ba578480ef177e3, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Soldier_Body_diffuse
+    second: {fileID: 2800000, guid: 02b06ddd4280b384d8f9885221d4364b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Soldier_Body_normal
+    second: {fileID: 2800000, guid: f8330a733d8be3347bb51ae95b16a9e8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Soldier_Body_specular
+    second: {fileID: 2800000, guid: a3705753c19290c44b860330973d092c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Soldier_head_diffuse
+    second: {fileID: 2800000, guid: a03a1766929581a4e84887dc35e3bec9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Soldier_head_normal
+    second: {fileID: 2800000, guid: 1150ef5aaa569534a894aceb613dc6eb, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Soldier_head_specular
+    second: {fileID: 2800000, guid: 39daf266a8c9cc0459f3b81a04f28889, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

@@ -36,7 +36,7 @@ public class ThirdPersonCamera : MonoBehaviour {
 			cameraLookTarget = localPlayer.transform;
 	}
 
-	void Update (){
+	void LateUpdate (){
 		if (localPlayer == null)
 			return;
 

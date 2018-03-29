@@ -13,18 +13,22 @@ public class Projectile : MonoBehaviour {
 		Destroy (gameObject, timeToLive);
 	}
 
-	void OnTriggerEnter(Collider other){
+	void Update (){
+		transform.Translate (Vector3.forward * speed * Time.deltaTime);
+
+		RaycastHit hit;
+		if (Physics.Raycast (transform.position, transform.forward, out hit, 5f)) {
+			CheckDestructible (hit.transform);
+		}
+
+	}
+
+	void CheckDestructible(Transform other){
 		var destructible = other.transform.GetComponent<Destructible> ();
 		if (destructible == null)
 			return;
 
 		destructible.TakeDamage (damage);
-
-	}
-
-	void Update (){
-		transform.Translate (Vector3.forward * speed * Time.deltaTime);
-
 	}
 
 }
