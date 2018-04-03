@@ -9,7 +9,9 @@ public class Shooter : MonoBehaviour {
 	[SerializeField] public Transform hand;
 	[SerializeField] AudioController audioReload;
 	[SerializeField] AudioController audioFire;
-	[SerializeField] Transform aimTarget;
+
+	public Transform AimTarget;
+	public Vector3 AimTargetOffset;
 
 	public WeaponReloader Reloader;
 	private ParticleSystem muzzleParticleSystem;
@@ -17,7 +19,8 @@ public class Shooter : MonoBehaviour {
 	float nextFireAllowed;
 	Transform muzzle;
 
-	public bool canFire;
+	[HideInInspector]
+	public bool CanFire;
 
 	public void Equip(){
 		transform.SetParent (hand);
@@ -50,7 +53,7 @@ public class Shooter : MonoBehaviour {
 
 	public virtual void Fire(){
 
-		canFire = false;
+		CanFire = false;
 
 		if (Time.time < nextFireAllowed)
 			return;
@@ -65,13 +68,13 @@ public class Shooter : MonoBehaviour {
 
 		nextFireAllowed = Time.time + rateOfFire;
 
-		muzzle.LookAt (aimTarget);
+		muzzle.LookAt (AimTarget.position + AimTargetOffset);
 		FireEffect ();
 
 
 		Instantiate (projectile, muzzle.position, muzzle.rotation);
 		audioFire.Play ();
-		canFire = true;
+		CanFire = true;
 	}
 
 }

@@ -24,8 +24,6 @@ public class Destructible : MonoBehaviour {
 	}
 
 	public virtual void Die(){
-		if (!IsAlive)
-			return;
 		if (OnDeath != null)
 			OnDeath ();
 	}
@@ -44,4 +42,6 @@ public class Destructible : MonoBehaviour {
 	public void Reset(){
 		damageTaken = 0;
 	}
+		
+
 }

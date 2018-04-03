@@ -6,7 +6,7 @@ public class GameManager {
 
 
 	public event System.Action<Player> OnLocalPlayerJoined;
-	 GameObject gameObject;
+	GameObject gameObject;
 
 	static GameManager m_Instance;
 	public static GameManager Instance {

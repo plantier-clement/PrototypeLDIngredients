@@ -5,6 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerState))]
+[RequireComponent(typeof(PlayerHealth))]
 
 public class Player : MonoBehaviour {
 
@@ -15,10 +16,7 @@ public class Player : MonoBehaviour {
 		public bool LockMouse;
 	}
 
-	[SerializeField] float runSpeed;
-	[SerializeField] float walkSpeed;
-	[SerializeField] float crouchSpeed;
-	[SerializeField] float sprintSpeed;
+	[SerializeField] SwatSoldier settings;
 	[SerializeField] MouseInput MouseControl;
 	[SerializeField] AudioController footsteps;
 	[SerializeField] float minimumMoveThreshold;
@@ -46,6 +44,14 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	private PlayerHealth m_PlayerHealth;
+	public PlayerHealth PlayerHealth{
+		get {
+			if (m_PlayerHealth == null)
+				m_PlayerHealth = GetComponent<PlayerHealth> ();
+			return m_PlayerHealth;
+		}
+	}
 
 
 	private PlayerState m_PlayerState;
@@ -70,19 +76,19 @@ public class Player : MonoBehaviour {
 	}
 
 	void Move(){
-		float moveSpeed = runSpeed;
+		float moveSpeed = settings.RunSpeed;
 		if (playerInput.IsWalking)
-			moveSpeed = walkSpeed;
+			moveSpeed = settings.WalkSpeed;
 
 		if (playerInput.IsSprinting)
-			moveSpeed = sprintSpeed;
+			moveSpeed = settings.SprintSpeed;
 
 		if (playerInput.IsCrouched)
-			moveSpeed = crouchSpeed;
+			moveSpeed = settings.CrouchSpeed;
 
 		Vector2 direction = new Vector2 (playerInput.Vertical * moveSpeed, playerInput.Horizontal * moveSpeed);
 
-		MoveController.Move (transform.forward * direction.x * 0.02f + transform.right * direction.y * 0.02f);
+		MoveController.SimpleMove (transform.forward * direction.x + transform.right * direction.y );
 
 
 
@@ -104,6 +110,10 @@ public class Player : MonoBehaviour {
 	}
 
 	void Update () {
+
+		if (!PlayerHealth.IsAlive)
+			return;
+		
 		Move ();
 		LookAround ();
 	}

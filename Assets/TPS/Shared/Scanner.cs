@@ -17,41 +17,21 @@ public class Scanner : MonoBehaviour {
 	LayerMask mask;
 
 	SphereCollider rangeTrigger;
-	List<Player> targets;
-	Player m_SelectedTarget;
-	Player selectedTarget{
+
+
+	public float ScanRange{
 		get{
-			return m_SelectedTarget;
-		}
-		set{
-			m_SelectedTarget = value;
-
-			if (m_SelectedTarget == null)
-				return;
-
-			if (OnTargetSelected != null)
-				OnTargetSelected (m_SelectedTarget.transform.position);
+			if (rangeTrigger == null)
+				rangeTrigger = GetComponent <SphereCollider> ();
+			return rangeTrigger.radius;
 		}
 	}
 
-	public event System.Action <Vector3> OnTargetSelected;
+	public event System.Action OnScanReady;
 
-
-	void Start(){
-		
-		rangeTrigger = GetComponent <SphereCollider> ();
-		targets = new List<Player> ();
-		PrepareScan ();
-	
-	}
 
 	void OnDrawGizmos(){
 		
-		Gizmos.color = Color.cyan;
-		if (selectedTarget != null) {
-			Gizmos.DrawLine (transform.position, selectedTarget.transform.position);
-		}
-
 		Gizmos.color = Color.green;
 		Gizmos.DrawLine (transform.position, transform.position + GetViewAngle (fieldOfView / 2) * GetComponent <SphereCollider> ().radius);  // replace by GetComponent <SphereCollider> ().radius if needed
 		Gizmos.DrawLine (transform.position, transform.position + GetViewAngle (-fieldOfView / 2) * GetComponent <SphereCollider> ().radius); 
@@ -60,11 +40,12 @@ public class Scanner : MonoBehaviour {
 	}
 
 	void PrepareScan(){
-		
-		if (selectedTarget != null)
-			return;
 
-		GameManager.Instance.Timer.Add (ScanForTargets, scanSpeed);
+		GameManager.Instance.Timer.Add (() =>{
+			if (OnScanReady != null)
+				OnScanReady();
+			}, scanSpeed);
+
 	}
 
 
@@ -74,36 +55,29 @@ public class Scanner : MonoBehaviour {
 		return new Vector3 (Mathf.Sin (radian), 0, Mathf.Cos (radian));
 	}
 
-	void ScanForTargets(){
-		
-		Collider[] results = Physics.OverlapSphere (transform.position, rangeTrigger.radius);
+
+
+	public List<T> ScanForTargets<T>(){
+
+		List<T> targets = new List<T>();
+		Collider[] results = Physics.OverlapSphere (transform.position, ScanRange);
 
 		for (int i = 0; i < results.Length; i++) {
 			
-			var player = results[i].transform.GetComponent <Player> ();
+			var player = results[i].transform.GetComponent <T> ();
 
 			if (player == null)
 				continue;
 
-			if (!IsInLineOfSight (Vector3.up, player.transform.position))
+			if (!IsInLineOfSight (Vector3.up, results[i].transform.position))
 				continue;
 
 			targets.Add (player);
 		}
 
-		if (targets.Count == 1) {
-			
-			selectedTarget = targets [0];
-		} else {
-			
-			float closestTarget = rangeTrigger.radius;
-			foreach (var possibleTarget in targets) {
-				if (Vector3.Distance (transform.position, possibleTarget.transform.position) < closestTarget)
-					selectedTarget = possibleTarget;
-			}
-		}
-
 		PrepareScan ();
+
+		return targets;
 			
 	}
 
@@ -116,8 +90,9 @@ public class Scanner : MonoBehaviour {
 			float distanceToTarget = Vector3.Distance (transform.position, targetPosition);
 
 			//something is blocking our view
-			if (Physics.Raycast (transform.position + eyeheight, direction.normalized, distanceToTarget, mask))
+			if (Physics.Raycast (transform.position + eyeheight + transform.forward * 0.3f, direction.normalized, distanceToTarget, mask)) {
 				return false;
+			}
 
 			return true;
 		}

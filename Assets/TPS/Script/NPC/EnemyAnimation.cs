@@ -19,6 +19,7 @@ public class EnemyAnimation : MonoBehaviour {
 	private void Update(){
 		float velocity = ((transform.position - lastPosition).magnitude) / Time.deltaTime;
 		lastPosition = transform.position;
+		animator.SetBool ("IsWalking", true);
 		animator.SetFloat ("Vertical", velocity / pathFinder.Agent.speed);
 	}
 

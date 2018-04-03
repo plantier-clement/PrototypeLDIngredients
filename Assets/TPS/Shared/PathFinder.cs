@@ -11,9 +11,6 @@ public class PathFinder : MonoBehaviour {
 	[SerializeField]
 	float distanceRemainingThreshold;
 
-
-
-
 	bool m_DestinationReached;
 	bool destinationReached{
 		get{ 
@@ -47,8 +44,9 @@ public class PathFinder : MonoBehaviour {
 
 	void Update(){
 	
-		if (destinationReached)
+		if (destinationReached || Agent.hasPath)
 			return;
+		
 		if (Agent.remainingDistance < distanceRemainingThreshold)
 			destinationReached = true;
 	}

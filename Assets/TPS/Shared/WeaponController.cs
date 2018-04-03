@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerShoot : MonoBehaviour {
+public class WeaponController : MonoBehaviour {
 
-	[SerializeField] float weaponSwitchTime;
+	[SerializeField] 
+	float weaponSwitchTime;
+
+	[HideInInspector]
+	public bool CanFire;
+
 
 	Shooter[] weapons;
-	Shooter activeWeapon;
-
 	int currentWeaponIndex = 0;
-	bool canFire;
 	Transform weaponHolster;
 
 	public event System.Action<Shooter> OnWeaponSwitch;
 
+	Shooter m_ActiveWeapon;
 	public Shooter ActiveWeapon{
 		get{
-			return activeWeapon;
+			return m_ActiveWeapon;
 		}
 	}
 
 	void Awake(){
-		canFire = true;
+		CanFire = true;
 		weaponHolster = transform.Find ("Weapons");
 		weapons = weaponHolster.GetComponentsInChildren<Shooter> ();
 
@@ -36,12 +39,12 @@ public class PlayerShoot : MonoBehaviour {
 			weapons [i].transform.SetParent (weaponHolster);
 
 		}
-		
-	}
-		
-	void SwitchWeapon (int direction){
 
-		canFire = false;
+	}
+
+	internal void SwitchWeapon (int direction){
+
+		CanFire = false;
 		currentWeaponIndex += direction;
 
 		if (currentWeaponIndex > weapons.Length - 1)
@@ -56,34 +59,15 @@ public class PlayerShoot : MonoBehaviour {
 
 	}
 
-	void Equip(int index){
+	internal void Equip(int index){
 		DeactivateWeapons ();
-		canFire = true;
-		activeWeapon = weapons [index];
-		activeWeapon.Equip ();
+		CanFire = true;
+		m_ActiveWeapon = weapons [index];
+		m_ActiveWeapon.Equip ();
 		weapons [index].gameObject.SetActive (true);
 
 		if (OnWeaponSwitch != null)
-			OnWeaponSwitch (activeWeapon);
+			OnWeaponSwitch (m_ActiveWeapon);
 	}
 
-
-	void Update(){
-
-		if (GameManager.Instance.InputController.MouseWheelDown)
-			SwitchWeapon (1);
-
-		if (GameManager.Instance.InputController.MouseWheelUp)
-			SwitchWeapon (-1);
-
-		if (GameManager.Instance.LocalPlayer.PlayerState.MoveState == PlayerState.EMoveState.SPRINTING)
-			return;
-
-		if (!canFire)
-			return;
-
-		if (GameManager.Instance.InputController.Fire1) {
-			activeWeapon.Fire ();
-		}
-	}
 }
