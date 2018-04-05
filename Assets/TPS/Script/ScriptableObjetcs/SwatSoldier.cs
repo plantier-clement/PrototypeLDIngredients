@@ -11,4 +11,6 @@ public class SwatSoldier : ScriptableObject {
 	public float CrouchSpeed;
 	public float SprintSpeed;
 
+	public float CameraMaxAngle;
+
 }

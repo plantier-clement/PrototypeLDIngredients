@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4650028433122574}
   - component: {fileID: 108407612511880252}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 33959142877532464}
   - component: {fileID: 65484732393783296}
   - component: {fileID: 23276555944840616}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 4137852997770800}
   - component: {fileID: 114166085633386122}
   - component: {fileID: 54435792153537512}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AssaultRifleBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -221,3 +221,4 @@ MonoBehaviour:
   speed: 120
   timeToLive: 5
   damage: 1
+  bullethole: {fileID: 4675500532144274, guid: 62337d3ccfcb10b4cadbc49239bf83d3, type: 2}

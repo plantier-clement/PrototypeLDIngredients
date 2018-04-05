@@ -30,7 +30,7 @@ public class ThirdPersonCamera : MonoBehaviour {
 
 	void HandleOnLocalPlayerJoined (Player player)	{
 		localPlayer = player;
-		cameraLookTarget = localPlayer.transform.Find ("cameraLookTarget");
+		cameraLookTarget = localPlayer.transform.Find ("AimingPivot");
 
 		if (cameraLookTarget == null)
 			cameraLookTarget = localPlayer.transform;
@@ -53,7 +53,9 @@ public class ThirdPersonCamera : MonoBehaviour {
 									localPlayer.transform.right * cameraRig.CameraOffset.x;
 
 		// Quaternion targetRotation = Quaternion.LookRotation (cameraLookTarget.position - targetPosition, Vector3.forward); // camera is facing the same direction as target but can rotate if too close
-		Quaternion targetRotation = localPlayer.transform.localRotation; // camera is always facing in the same direction as player
+		// Quaternion targetRotation = localPlayer.transform.localRotation; // camera is always facing in the same direction as player
+
+		Quaternion targetRotation = cameraLookTarget.rotation; 
 
 		transform.position = Vector3.Lerp (transform.position, targetPosition, cameraRig.Damping * Time.deltaTime);
 		transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation, cameraRig.Damping * Time.deltaTime);

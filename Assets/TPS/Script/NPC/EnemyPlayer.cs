@@ -5,6 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PathFinder))]
 [RequireComponent(typeof(EnemyHealth))]
+[RequireComponent(typeof(EnemyState))]
 
 public class EnemyPlayer : MonoBehaviour {
 
@@ -33,6 +34,17 @@ public class EnemyPlayer : MonoBehaviour {
 
 	}
 
+	private EnemyState m_EnemyState;
+	public EnemyState EnemyState{
+		get{
+			if (m_EnemyState == null)
+				m_EnemyState = GetComponent <EnemyState> ();
+			return m_EnemyState;
+		}
+
+	}
+
+
 	void Start () {
 		pathFinder = GetComponent <PathFinder> ();
 		pathFinder.Agent.speed = settings.WalkSpeed;
@@ -41,6 +53,18 @@ public class EnemyPlayer : MonoBehaviour {
 		Scanner_OnScanReady ();
 
 		EnemyHealth.OnDeath += EnemyHealth_OnDeath;
+		EnemyState.OnModeChanged += EnemyState_OnModeChanged;
+
+
+	}
+
+	void EnemyState_OnModeChanged (EnemyState.EMode state)
+	{
+		pathFinder.Agent.speed = settings.WalkSpeed;
+
+		if (state == EnemyState.EMode.AWARE)
+			pathFinder.Agent.speed = settings.RunSpeed;
+
 	}
 
 	void EnemyHealth_OnDeath ()

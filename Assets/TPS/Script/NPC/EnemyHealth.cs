@@ -10,6 +10,8 @@ public class EnemyHealth : Destructible {
 	public override void Die () {
 		base.Die ();
 		ragdoll.EnableRagdoll (true);
+
+		GameManager.Instance.EventBus.RaiseEvent ("EnemyDeath");
 	}
 
 
