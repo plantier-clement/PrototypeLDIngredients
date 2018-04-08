@@ -16,6 +16,11 @@ public class ThirdPersonCamera : MonoBehaviour {
 	[SerializeField] 
 	CameraRig aimCamera;
 
+	[Header ("Camera Wall Collision")]
+	public float CamCollOffsetX = 0.2f;
+	public float CamCollOffsetZ = 0.2f;
+
+
 
 
 
@@ -42,7 +47,8 @@ public class ThirdPersonCamera : MonoBehaviour {
 
 		CameraRig cameraRig = defaultCamera;
 
-		if (localPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMING || localPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING)
+		if (localPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMING || 
+			localPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING)
 			cameraRig = aimCamera;
 
 
@@ -55,10 +61,26 @@ public class ThirdPersonCamera : MonoBehaviour {
 		// Quaternion targetRotation = Quaternion.LookRotation (cameraLookTarget.position - targetPosition, Vector3.forward); // camera is facing the same direction as target but can rotate if too close
 		// Quaternion targetRotation = localPlayer.transform.localRotation; // camera is always facing in the same direction as player
 
-		Quaternion targetRotation = cameraLookTarget.rotation; 
+	
+		Vector3 collisionDestination = cameraLookTarget.position + localPlayer.transform.up * targetHeight - localPlayer.transform.forward * .5f;
+		Debug.DrawLine (targetPosition, collisionDestination, Color.blue);
 
+		HandleCameraCollision (collisionDestination, ref targetPosition);
+
+		Quaternion targetRotation = cameraLookTarget.rotation; 
 		transform.position = Vector3.Lerp (transform.position, targetPosition, cameraRig.Damping * Time.deltaTime);
 		transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation, cameraRig.Damping * Time.deltaTime);
+	}
+
+
+	private void HandleCameraCollision(Vector3 toTarget, ref Vector3 fromTarget){
+		RaycastHit hit;
+		if (Physics.Linecast (toTarget, fromTarget, out hit)) {
+			Vector3 hitPoint = new Vector3 (hit.point.x + hit.normal.x * CamCollOffsetX, hit.point.y, hit.point.z + hit.normal.z * CamCollOffsetZ);
+			fromTarget = new Vector3 (hitPoint.x, fromTarget.y, hitPoint.z);
+
+		}
+	
 	}
 
 }

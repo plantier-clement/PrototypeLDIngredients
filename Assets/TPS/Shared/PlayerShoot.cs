@@ -7,12 +7,13 @@ public class PlayerShoot : WeaponController {
 
 
 	bool IsPlayerAlive = true;
-
+	Player player;
 
 	void Start(){
 
 		IsPlayerAlive = true;
-		GetComponent <Player> ().PlayerHealth.OnDeath += PlayerHealth_OnDeath;
+		player = GetComponent <Player> ();
+		player.PlayerHealth.OnDeath += PlayerHealth_OnDeath;
 	}
 
 
@@ -24,23 +25,39 @@ public class PlayerShoot : WeaponController {
 
 	void Update(){
 
-		if (!IsPlayerAlive)
+		if (!player.IsLocalPlayer && IsPlayerAlive) {
+		
+			if (player.InputState.Fire1) {
+				ActiveWeapon.Fire ();
+			}
+		}
+
+
+		if (!IsPlayerAlive || GameManager.Instance.IsPaused)
 			return;
 
-		if (GameManager.Instance.InputController.MouseWheelDown)
-			SwitchWeapon (1);
+		if (player.IsLocalPlayer) {
 
-		if (GameManager.Instance.InputController.MouseWheelUp)
-			SwitchWeapon (-1);
+			if (GameManager.Instance.InputController.MouseWheelDown)
+				SwitchWeapon (1);
 
-		if (GameManager.Instance.LocalPlayer.PlayerState.MoveState == PlayerState.EMoveState.SPRINTING)
-			return;
+			if (GameManager.Instance.InputController.MouseWheelUp)
+				SwitchWeapon (-1);
 
-		if (!CanFire)
-			return;
+			if (GameManager.Instance.LocalPlayer.PlayerState.MoveState == PlayerState.EMoveState.SPRINTING)
+				return;
 
-		if (GameManager.Instance.InputController.Fire1) {
-			ActiveWeapon.Fire ();
+			if (!CanFire)
+				return;
+
+			if (player.InputState.Fire1) {
+				ActiveWeapon.SetAimPoint (GetImpactPoint ());
+				ActiveWeapon.Fire ();
+			}
+
+			if (player.InputState.Reload)
+				ActiveWeapon.Reload ();
+
 		}
 	}
 }

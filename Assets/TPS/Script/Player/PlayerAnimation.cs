@@ -4,7 +4,27 @@ using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour {
 
+
+	public float Vertical;
+	public float Horizontal;
+	public bool IsWalking;
+	public bool IsSprinting;
+	public bool IsCrouched;
+	public float AimAngle;
+	public bool IsAiming;
+	public bool IsInCover;
+
 	Animator animator;
+
+
+	private Player m_Player;
+	private Player Player{
+		get{ 
+			if (m_Player == null)
+				m_Player = GetComponent <Player> ();
+			return m_Player;
+		}
+	}
 
 	private PlayerAim m_PlayerAim;
 	private PlayerAim PlayerAim{
@@ -20,18 +40,45 @@ public class PlayerAnimation : MonoBehaviour {
 
 	}
 
+
 	void Update(){
-		animator.SetFloat ("Horizontal", GameManager.Instance.InputController.Horizontal);
-		animator.SetFloat ("Vertical", GameManager.Instance.InputController.Vertical);
 
-		animator.SetBool ("IsWalking", GameManager.Instance.InputController.IsWalking);
-		animator.SetBool ("IsSprinting", GameManager.Instance.InputController.IsSprinting);
-		animator.SetBool ("IsCrouching", GameManager.Instance.InputController.IsCrouched);
-
-		animator.SetFloat ("AimAngle", PlayerAim.GetAngle ());
-		animator.SetBool ("IsAiming", GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMING ||
-			GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING);
+		if (GameManager.Instance.IsPaused)
+			return;
 
 
+		if (Player.IsLocalPlayer)
+			GetLocalPlayerInput ();
+
+		animator.SetFloat ("Horizontal", Horizontal);
+		animator.SetFloat ("Vertical", Vertical);
+
+		animator.SetBool ("IsWalking", IsWalking);
+		animator.SetBool ("IsSprinting", IsSprinting);
+		animator.SetBool ("IsCrouching", IsCrouched);
+
+		animator.SetFloat ("AimAngle", AimAngle);
+		animator.SetBool ("IsAiming", 	IsAiming);
+
+		animator.SetBool ("IsInCover", IsInCover);
+
+	}
+
+
+
+	void GetLocalPlayerInput(){
+
+		Vertical = Player.InputState.Vertical;
+		Horizontal = Player.InputState.Horizontal;
+
+		IsWalking = GameManager.Instance.LocalPlayer.PlayerState.MoveState == PlayerState.EMoveState.WALKING;
+		IsSprinting = Player.InputState.IsSprinting;
+		IsCrouched = Player.InputState.IsCrouched;
+
+		AimAngle = PlayerAim.GetAngle ();
+		IsAiming = 	GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMING ||
+					GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING;
+		
+		IsInCover = GameManager.Instance.LocalPlayer.PlayerState.MoveState == PlayerState.EMoveState.COVER;
 	}
 }

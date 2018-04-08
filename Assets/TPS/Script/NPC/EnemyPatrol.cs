@@ -38,27 +38,47 @@ public class EnemyPatrol : MonoBehaviour {
 	void Awake(){
 		pathFinder = GetComponent <PathFinder> ();
 
-		pathFinder.OnDestinationReached += PathFinder_OnDestinationReached;
-		waypointController.OnWaypointChanged += WaypointController_OnWaypointChanged;
+	//	pathFinder.OnDestinationReached += PathFinder_OnDestinationReached;
+	//	waypointController.OnWaypointChanged += WaypointController_OnWaypointChanged;
 
 		EnemyPlayer.EnemyHealth.OnDeath += EnemyPlayer_EnemyHealth_OnDeath;
 		EnemyPlayer.OnTargetSelected += EnemyPlayer_OnTargetSelected;
 
 	}
 
-	void EnemyPlayer_OnTargetSelected (Player obj)
-	{
-		pathFinder.Agent.isStopped = true;
+	void EnemyPlayer_OnTargetSelected (Player obj)	{
+		
+		if(pathFinder.Agent.isActiveAndEnabled)
+			pathFinder.Agent.isStopped = true;
 	}
 
 	void EnemyPlayer_EnemyHealth_OnDeath ()	{
-		pathFinder.Agent.isStopped = true;
+		
+		if(pathFinder.Agent.isActiveAndEnabled)
+			pathFinder.Agent.isStopped = true;
+	}
+
+
+	void OnEnable(){
+		
+		pathFinder.OnDestinationReached += PathFinder_OnDestinationReached;
+		waypointController.OnWaypointChanged += WaypointController_OnWaypointChanged;
+	
+	}
+
+	void OnDisables(){
+		
+		pathFinder.OnDestinationReached -= PathFinder_OnDestinationReached;
+		waypointController.OnWaypointChanged -= WaypointController_OnWaypointChanged;
+
 	}
 
 
 	private void WaypointController_OnWaypointChanged (Waypoint waypoint) {
+		
 		pathFinder.SetTarget (waypoint.transform.position);
 	}
+
 
 	private void PathFinder_OnDestinationReached () {
 		// assume we are patroling

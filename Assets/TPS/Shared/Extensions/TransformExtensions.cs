@@ -26,14 +26,14 @@ namespace SharedExtensions
 			if (Vector3.Angle (origin.forward, direction.normalized) < fieldOfView / 2) {
 				float distanceToTarget = Vector3.Distance (origin.position, target);
 
-				//something is blocking our view
 				if (Physics.Raycast (origin.position + offset + origin.forward * 0.3f, direction.normalized, distanceToTarget, collisionMask)) {
+					// in range && in fieldOfView but view is blocked
 					return false;
 				}
-
+				// in range && in fieldOfView && not blocked (spotted) 
 				return true;
 			}
-
+			// in range but not in fieldOfView
 			return false;
 
 

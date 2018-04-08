@@ -14,7 +14,7 @@ public class Scanner : MonoBehaviour {
 	float fieldOfView = 90f;
 
 	[SerializeField]
-	LayerMask mask;
+	public LayerMask mask;
 
 	SphereCollider rangeTrigger;
 
@@ -69,9 +69,9 @@ public class Scanner : MonoBehaviour {
 			if (player == null)
 				continue;
 
-			if (!transform.IsInLineOfSight (results[i].transform.position, fieldOfView, mask, Vector3.up))
+			if (!transform.IsInLineOfSight (results [i].transform.position, fieldOfView, mask, Vector3.up)) {
 				continue;
-
+			}
 			targets.Add (player);
 		}
 

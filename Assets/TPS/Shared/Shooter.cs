@@ -10,17 +10,41 @@ public class Shooter : MonoBehaviour {
 	[SerializeField] AudioController audioReload;
 	[SerializeField] AudioController audioFire;
 
-	public Transform AimTarget;
+	public Vector3 AimPoint;
 	public Vector3 AimTargetOffset;
-
 	public WeaponReloader Reloader;
-	private ParticleSystem muzzleParticleSystem;
-
-	float nextFireAllowed;
-	Transform muzzle;
 
 	[HideInInspector]
 	public bool CanFire;
+
+	Player player;
+	private ParticleSystem muzzleParticleSystem;
+	float nextFireAllowed;
+	Transform muzzle;
+
+	private WeaponRecoil m_WeaponRecoil;
+	private WeaponRecoil WeaponRecoil{
+		get{ 
+			if (m_WeaponRecoil == null)
+				m_WeaponRecoil = GetComponent <WeaponRecoil> ();
+			return m_WeaponRecoil;
+		}
+	}
+
+
+	public void SetAimPoint(Vector3 target){
+		AimPoint = target;
+
+	}
+
+
+	void Awake () {
+		muzzle = transform.Find ("Model/Muzzle");
+		Reloader = GetComponent<WeaponReloader> ();
+		muzzleParticleSystem = muzzle.GetComponent < ParticleSystem> ();
+		player = GetComponentInParent <Player> ();
+	}
+		
 
 	public void Equip(){
 		transform.SetParent (hand);
@@ -28,28 +52,29 @@ public class Shooter : MonoBehaviour {
 		transform.localRotation = Quaternion.identity;
 	}
 
+
 	void OnDisable(){
 		//
 	}
-
-	void Awake () {
-		muzzle = transform.Find ("Model/Muzzle");
-		Reloader = GetComponent<WeaponReloader> ();
-		muzzleParticleSystem = muzzle.GetComponent < ParticleSystem> ();
-	}
+		
 
 	public void Reload(){
 		if (Reloader == null)
 			return;
-		Reloader.Reload();
+
+		if(player.IsLocalPlayer)
+			Reloader.Reload();
+
 		audioReload.Play ();
 	}
+
 
 	void FireEffect(){
 		if (muzzleParticleSystem == null)
 			return;
 		muzzleParticleSystem.Play ();
 	}
+
 
 	public virtual void Fire(){
 
@@ -58,21 +83,27 @@ public class Shooter : MonoBehaviour {
 		if (Time.time < nextFireAllowed)
 			return;
 
-		if (Reloader != null) {
+		if (player.IsLocalPlayer && Reloader != null) {
+			
 			if (Reloader.IsReloading)
 				return;
+			
 			if (Reloader.RoundsRemainingInClip == 0)
 				return;
+			
 			Reloader.TakeFromClip (1);
 		}
 
 		nextFireAllowed = Time.time + rateOfFire;
 
-		muzzle.LookAt (AimTarget.position + AimTargetOffset);
+		muzzle.LookAt (AimPoint + AimTargetOffset);
+		Projectile newBullet = Instantiate (projectile, muzzle.position, muzzle.rotation);
+
+
+		if (this.WeaponRecoil)
+			this.WeaponRecoil.Activate ();
+			
 		FireEffect ();
-
-
-		Instantiate (projectile, muzzle.position, muzzle.rotation);
 		audioFire.Play ();
 		CanFire = true;
 	}

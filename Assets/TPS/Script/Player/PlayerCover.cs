@@ -14,6 +14,50 @@ public class PlayerCover : MonoBehaviour {
 	[SerializeField]
 	LayerMask coverMask;
 
+	bool isAiming{
+		get { 
+			return GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMING ||
+				GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING;
+		}
+	
+	}
+
+	void Update(){
+
+		if (isAiming && isInCover) {
+			ExecuteCoverToggle ();
+			return;
+		}
+			
+
+		if (!canTakeCover)
+			return;
+
+		if (GameManager.Instance.InputController.CoverToggle) {
+			TakeCover ();
+
+		}
+
+	}
+
+
+	void TakeCover(){
+		FindCoverAroundPlayer ();
+
+		if (closestHit.distance == 0)
+			return;
+
+		ExecuteCoverToggle ();
+
+	}
+
+
+	void ExecuteCoverToggle(){
+		isInCover = !isInCover;
+		GameManager.Instance.EventBus.RaiseEvent ("CoverToggle");
+		transform.rotation = Quaternion.LookRotation (closestHit.normal) * Quaternion.Euler (0, 180f, 0);
+	}
+		
 
 	private void FindCoverAroundPlayer(){
 		closestHit = new RaycastHit ();
@@ -38,24 +82,9 @@ public class PlayerCover : MonoBehaviour {
 
 	public void SetPlayerCoverAllowed (bool value) {
 		canTakeCover = value;
-	}
 
-
-	void Update(){
-
-		if (!canTakeCover)
-			return;
-
-		if (Input.GetKeyDown (KeyCode.G)) {
-			FindCoverAroundPlayer ();
-
-			if (closestHit.distance == 0)
-				return;
-
-			transform.rotation = Quaternion.LookRotation (closestHit.normal) * Quaternion.Euler (0, 180f, 0);
-		
-		}
-
+		if (!canTakeCover && isInCover)
+			ExecuteCoverToggle ();
 	}
 
 }

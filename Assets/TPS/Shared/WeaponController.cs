@@ -24,6 +24,8 @@ public class WeaponController : MonoBehaviour {
 		}
 	}
 
+
+
 	void Awake(){
 		CanFire = true;
 		weaponHolster = transform.Find ("Weapons");
@@ -33,6 +35,21 @@ public class WeaponController : MonoBehaviour {
 			Equip (0);
 	}
 
+
+	public Vector3 GetImpactPoint(){
+
+		Ray ray = Camera.main.ViewportPointToRay (new Vector3 (.5f, .5f, 0));
+		RaycastHit hit;
+		Vector3 targetPosition = ray.GetPoint (500);
+
+		if (Physics.Raycast (ray, out hit))
+			return hit.point;
+	
+		return transform.position + transform.forward * 50;
+	}
+
+
+
 	void DeactivateWeapons(){
 		for (int i = 0; i < weapons.Length; i++) {
 			weapons [i].gameObject.SetActive (false);
@@ -41,6 +58,7 @@ public class WeaponController : MonoBehaviour {
 		}
 
 	}
+
 
 	internal void SwitchWeapon (int direction){
 

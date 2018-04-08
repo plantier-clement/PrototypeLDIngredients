@@ -75,6 +75,21 @@ ModelImporter:
     100134: swat:Spine1
     100136: swat:Spine2
     100138: //RootNode
+    100140: swat:Jaw_end
+    100142: swat:LeftEye_end
+    100144: swat:LeftHandIndex3_end
+    100146: swat:LeftHandMiddle3_end
+    100148: swat:LeftHandPinky3_end
+    100150: swat:LeftHandRing3_end
+    100152: swat:LeftHandThumb3_end
+    100154: swat:LeftToeBase_end
+    100156: swat:RightEye_end
+    100158: swat:RightHandIndex3_end
+    100160: swat:RightHandMiddle3_end
+    100162: swat:RightHandPinky3_end
+    100164: swat:RightHandRing3_end
+    100166: swat:RightHandThumb3_end
+    100168: swat:RightToeBase_end
     400000: swat:Head
     400002: swat:HeadTop_End
     400004: swat:Hips
@@ -145,7 +160,22 @@ ModelImporter:
     400134: swat:Spine1
     400136: swat:Spine2
     400138: //RootNode
-    7400000: Taking Cover Idle
+    400140: swat:Jaw_end
+    400142: swat:LeftEye_end
+    400144: swat:LeftHandIndex3_end
+    400146: swat:LeftHandMiddle3_end
+    400148: swat:LeftHandPinky3_end
+    400150: swat:LeftHandRing3_end
+    400152: swat:LeftHandThumb3_end
+    400154: swat:LeftToeBase_end
+    400156: swat:RightEye_end
+    400158: swat:RightHandIndex3_end
+    400160: swat:RightHandMiddle3_end
+    400162: swat:RightHandPinky3_end
+    400164: swat:RightHandRing3_end
+    400166: swat:RightHandThumb3_end
+    400168: swat:RightToeBase_end
+    7400000: cover_idle
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -175,7 +205,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Taking Cover Idle
+      name: cover_idle
       takeName: mixamo.com
       firstFrame: 0
       lastFrame: 68
@@ -185,7 +215,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0

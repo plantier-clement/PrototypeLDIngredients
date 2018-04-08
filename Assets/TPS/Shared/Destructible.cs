@@ -29,6 +29,9 @@ public class Destructible : MonoBehaviour {
 	}
 
 	public virtual void TakeDamage(float amount){
+
+		if (!IsAlive)
+			return;
 		damageTaken += amount;
 
 		if (OnDamageReceived != null)

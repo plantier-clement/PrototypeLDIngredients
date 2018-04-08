@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SharedExtensions;
 
 
 [RequireComponent(typeof(EnemyPlayer))]
@@ -18,28 +19,55 @@ public class EnemyShoot : WeaponController {
 	EnemyPlayer enemyPlayer;
 	bool shouldFire;
 
-	void Start(){
-		
+	EnemyAnimation enemyAnimation;
+
+	Vector3 myTarget;
+
+
+	void Start() {
 		enemyPlayer = GetComponent <EnemyPlayer> ();
 		enemyPlayer.OnTargetSelected += EnemyPlayer_OnTargetSelected;
-		
+		enemyAnimation = enemyPlayer.GetComponent <EnemyAnimation>();
+
+	}
+
+
+	void Update () {
+		if (!shouldFire || !CanFire || !enemyPlayer.EnemyHealth.IsAlive)
+			return;
+		ActiveWeapon.Fire ();
 	}
 
 
 	void EnemyPlayer_OnTargetSelected (Player target) {
 
-		ActiveWeapon.AimTarget = target.transform;
+		myTarget = target.transform.position;
+		ActiveWeapon.SetAimPoint (target.transform.position);
 		ActiveWeapon.AimTargetOffset = Vector3.up * 1.5f;
 		StartBurst ();
 	}
 
 
+	void CrouchState(){
+
+		bool takeCover = Random.Range (0, 3) == 0;  // possibilities = 0, 1, 2, 3 ; if 0 then do something. basically 25% chance
+
+		if (!takeCover)
+			return;
+
+		float distanceToTarget = Vector3.Distance (transform.position, myTarget);
+		if (distanceToTarget > 15)
+			enemyAnimation.IsCrouched = true;
+	}
+
+
 	void StartBurst (){
 
-		if (!enemyPlayer.EnemyHealth.IsAlive)
+		if (!enemyPlayer.EnemyHealth.IsAlive && !CanSeeTarget ())
 			return;
 
 		CheckReload ();
+		CrouchState ();
 		shouldFire = true;
 
 		GameManager.Instance.Timer.Add (EndBurst, Random.Range (burstDurationMin, burstDurationMax));
@@ -52,7 +80,21 @@ public class EnemyShoot : WeaponController {
 			return;
 		
 		CheckReload ();
-		GameManager.Instance.Timer.Add (StartBurst, shootingSpeed);
+		CrouchState ();
+
+		if(CanSeeTarget ())
+			GameManager.Instance.Timer.Add (StartBurst, shootingSpeed);
+	}
+
+
+	bool CanSeeTarget(){
+
+		if (!transform.IsInLineOfSight (myTarget, 90, enemyPlayer.playerScanner.mask, Vector3.up)) {
+			// clear the target
+			enemyPlayer.ClearTargetAndScan();
+			return false;
+		}
+		return true;
 	}
 
 
@@ -64,9 +106,5 @@ public class EnemyShoot : WeaponController {
 	}
 
 
-	void Update (){
-		if (!shouldFire || !CanFire || !enemyPlayer.EnemyHealth.IsAlive)
-			return;
-		ActiveWeapon.Fire ();
-	}
+
 }

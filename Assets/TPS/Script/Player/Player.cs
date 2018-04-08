@@ -16,14 +16,18 @@ public class Player : MonoBehaviour {
 		public bool LockMouse;
 	}
 
-	[SerializeField] SwatSoldier settings;
 	[SerializeField] MouseInput MouseControl;
 	[SerializeField] AudioController footsteps;
 	[SerializeField] float minimumMoveThreshold;
 
+	public SwatSoldier Settings;
 	public PlayerAim playerAim;
+	public bool IsLocalPlayer;
 
-	private Vector3 previousPosition;
+
+
+	InputController playerInput;
+	Vector2 mouseInput;
 
 	private CharacterController m_MoveController;
 	public CharacterController MoveController{
@@ -34,6 +38,15 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	private InputController.InputState m_InputState;
+	public InputController.InputState InputState {
+		get { 
+			if (m_InputState == null)
+				m_InputState = GameManager.Instance.InputController.State;
+			return m_InputState;
+		}
+	}
+
 
 	private PlayerShoot m_PlayerShoot;
 	public PlayerShoot PlayerShoot{
@@ -41,6 +54,15 @@ public class Player : MonoBehaviour {
 			if (m_PlayerShoot == null)
 				m_PlayerShoot = GetComponent<PlayerShoot> ();
 			return m_PlayerShoot;
+		}
+	}
+
+	private WeaponController m_WeaponController;
+	public WeaponController WeaponController {
+		get {
+			if (m_WeaponController == null)
+				m_WeaponController = GetComponent<WeaponController> ();
+			return m_WeaponController;
 		}
 	}
 
@@ -63,58 +85,57 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	InputController playerInput;
-	Vector2 mouseInput;
 
 	void Awake() {
-		playerInput = GameManager.Instance.InputController;
-		GameManager.Instance.LocalPlayer = this;
-		if (MouseControl.LockMouse) {
-			Cursor.visible = false;
-			Cursor.lockState = CursorLockMode.Locked;
+		
+		if(!GameManager.Instance.IsNetworkGame)
+			SetAsLocalPlayer ();
+	}
+
+
+	void Update () {
+
+		if (!PlayerHealth.IsAlive || GameManager.Instance.IsPaused)
+			return;
+
+		if (IsLocalPlayer) {
+			LookAround ();
 		}
 	}
 
-	void Move(){
-		float moveSpeed = settings.RunSpeed;
-		if (playerInput.IsWalking)
-			moveSpeed = settings.WalkSpeed;
 
-		if (playerInput.IsSprinting)
-			moveSpeed = settings.SprintSpeed;
-
-		if (playerInput.IsCrouched)
-			moveSpeed = settings.CrouchSpeed;
-
-		Vector2 direction = new Vector2 (playerInput.Vertical * moveSpeed, playerInput.Horizontal * moveSpeed);
-
-		MoveController.SimpleMove (transform.forward * direction.x + transform.right * direction.y );
-
-
-
-		if (Vector3.Distance(transform.position, previousPosition) > minimumMoveThreshold)
-			footsteps.Play ();
-		
-
-		previousPosition = transform.position;
+	public void SetInputState (InputController.InputState state) {
+	
+		m_InputState = state;
 	}
 
-	void LookAround ()
-	{
+
+	public void SetAsLocalPlayer(){
+
+		IsLocalPlayer = true;
+		playerInput = GameManager.Instance.InputController;
+		GameManager.Instance.LocalPlayer = this;
+
+		SetCursor (MouseControl.LockMouse);
+	
+	}
+
+
+	public void SetCursor(bool value) {
+		
+		Cursor.visible = !value;
+		Cursor.lockState = value ? CursorLockMode.Locked : CursorLockMode.None;
+	}
+
+
+	void LookAround () {
+
 		mouseInput.x = Mathf.Lerp (mouseInput.x, playerInput.MouseInput.x, 1.0f / MouseControl.Damping.x);
 		mouseInput.y = Mathf.Lerp (mouseInput.y, playerInput.MouseInput.y, 1.0f / MouseControl.Damping.y);
 		transform.Rotate (Vector3.up * mouseInput.x * MouseControl.Sensitivity.x);
 
 		playerAim.SetRotation (mouseInput.y * MouseControl.Sensitivity.y);
-
 	}
 
-	void Update () {
 
-		if (!PlayerHealth.IsAlive)
-			return;
-		
-		Move ();
-		LookAround ();
-	}
 }

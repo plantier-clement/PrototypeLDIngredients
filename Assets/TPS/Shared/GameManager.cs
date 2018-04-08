@@ -7,6 +7,11 @@ public class GameManager {
 
 	public event System.Action<Player> OnLocalPlayerJoined;
 	GameObject gameObject;
+	public bool IsPaused;
+
+	private bool m_IsNetworkGame;
+	private bool m_IsNetworkGameChecked;
+
 
 	static GameManager m_Instance;
 	public static GameManager Instance {
@@ -17,10 +22,23 @@ public class GameManager {
 				m_Instance.gameObject.AddComponent<InputController> ();
 				m_Instance.gameObject.AddComponent<Timer> ();
 				m_Instance.gameObject.AddComponent<Respawner> ();
+
 			}
 			return m_Instance;
 		}
 	}
+
+
+	public bool IsNetworkGame{
+		get { 
+			if(!m_IsNetworkGameChecked){
+				m_IsNetworkGameChecked = true;
+				m_IsNetworkGame = GameObject.Find ("NetworkManager") != null ;
+			}
+			return m_IsNetworkGame;
+		}
+	}
+
 
 	private InputController m_InputController;
 	public InputController InputController {

@@ -12,7 +12,7 @@ public class EventBus {
 
 		public EventListener()
 		{
-			IsSingleShot = true;
+			IsSingleShot = false;
 		}
 			
 	}
@@ -29,9 +29,16 @@ public class EventBus {
 	}
 
 
+
+	public void AddListener (string name, EventListener.Callback method){
+
+		AddListener (name, new EventListener { Method = method });
+	}
+
+
 	public void AddListener(string name, EventListener listener) {
 
-		if (EventTable.ContainsKey (name))
+		if (!EventTable.ContainsKey (name))
 			EventTable.Add (name, new List<EventListener> ());
 
 		if (EventTable [name].Contains (listener))

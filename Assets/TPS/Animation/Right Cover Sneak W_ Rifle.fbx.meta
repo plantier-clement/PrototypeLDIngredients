@@ -75,6 +75,21 @@ ModelImporter:
     100134: swat:Spine
     100136: swat:Spine1
     100138: swat:Spine2
+    100140: swat:Jaw_end
+    100142: swat:LeftEye_end
+    100144: swat:LeftHandIndex3_end
+    100146: swat:LeftHandMiddle3_end
+    100148: swat:LeftHandPinky3_end
+    100150: swat:LeftHandRing3_end
+    100152: swat:LeftHandThumb3_end
+    100154: swat:LeftToeBase_end
+    100156: swat:RightEye_end
+    100158: swat:RightHandIndex3_end
+    100160: swat:RightHandMiddle3_end
+    100162: swat:RightHandPinky3_end
+    100164: swat:RightHandRing3_end
+    100166: swat:RightHandThumb3_end
+    100168: swat:RightToeBase_end
     400000: //RootNode
     400002: swat:Head
     400004: swat:HeadTop_End
@@ -145,7 +160,22 @@ ModelImporter:
     400134: swat:Spine
     400136: swat:Spine1
     400138: swat:Spine2
-    7400000: Right Cover Sneak W_ Rifle
+    400140: swat:Jaw_end
+    400142: swat:LeftEye_end
+    400144: swat:LeftHandIndex3_end
+    400146: swat:LeftHandMiddle3_end
+    400148: swat:LeftHandPinky3_end
+    400150: swat:LeftHandRing3_end
+    400152: swat:LeftHandThumb3_end
+    400154: swat:LeftToeBase_end
+    400156: swat:RightEye_end
+    400158: swat:RightHandIndex3_end
+    400160: swat:RightHandMiddle3_end
+    400162: swat:RightHandPinky3_end
+    400164: swat:RightHandRing3_end
+    400166: swat:RightHandThumb3_end
+    400168: swat:RightToeBase_end
+    7400000: cover_walk_right
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -175,7 +205,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Right Cover Sneak W_ Rifle
+      name: cover_walk_right
       takeName: mixamo.com
       firstFrame: 0
       lastFrame: 34
@@ -185,8 +215,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
