@@ -7,11 +7,14 @@ public class Shooter : MonoBehaviour {
 	[SerializeField] float rateOfFire;
 	[SerializeField] Projectile projectile;
 	[SerializeField] public Transform hand;
-	[SerializeField] AudioController audioReload;
-	[SerializeField] AudioController audioFire;
+	[SerializeField] AudioControllerRandom audioFire;
 
+
+	[HideInInspector]
 	public Vector3 AimPoint;
+	[HideInInspector]
 	public Vector3 AimTargetOffset;
+	[HideInInspector]
 	public WeaponReloader Reloader;
 
 	[HideInInspector]
@@ -32,19 +35,18 @@ public class Shooter : MonoBehaviour {
 	}
 
 
-	public void SetAimPoint(Vector3 target){
-		AimPoint = target;
-
-	}
-
-
 	void Awake () {
 		muzzle = transform.Find ("Model/Muzzle");
 		Reloader = GetComponent<WeaponReloader> ();
-		muzzleParticleSystem = muzzle.GetComponent < ParticleSystem> ();
-		player = GetComponentInParent <Player> ();
+		muzzleParticleSystem = muzzle.GetComponent<ParticleSystem> ();
+		player = GetComponentInParent<Player> ();
 	}
-		
+
+
+	public void SetAimPoint(Vector3 target){
+		AimPoint = target;
+	}
+
 
 	public void Equip(){
 		transform.SetParent (hand);
@@ -61,11 +63,10 @@ public class Shooter : MonoBehaviour {
 	public void Reload(){
 		if (Reloader == null)
 			return;
+		
 
 		if(player.IsLocalPlayer)
 			Reloader.Reload();
-
-		audioReload.Play ();
 	}
 
 

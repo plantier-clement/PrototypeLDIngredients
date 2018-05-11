@@ -40,7 +40,7 @@ public class WeaponController : MonoBehaviour {
 
 		Ray ray = Camera.main.ViewportPointToRay (new Vector3 (.5f, .5f, 0));
 		RaycastHit hit;
-		Vector3 targetPosition = ray.GetPoint (500);
+	//	Vector3 targetPosition = ray.GetPoint (500);
 
 		if (Physics.Raycast (ray, out hit))
 			return hit.point;

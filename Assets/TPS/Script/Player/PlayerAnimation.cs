@@ -13,6 +13,7 @@ public class PlayerAnimation : MonoBehaviour {
 	public float AimAngle;
 	public bool IsAiming;
 	public bool IsInCover;
+	public bool Reload;
 
 	Animator animator;
 
@@ -61,6 +62,7 @@ public class PlayerAnimation : MonoBehaviour {
 		animator.SetBool ("IsAiming", 	IsAiming);
 
 		animator.SetBool ("IsInCover", IsInCover);
+		animator.SetBool ("IsReloading", Reload);
 
 	}
 
@@ -80,5 +82,7 @@ public class PlayerAnimation : MonoBehaviour {
 					GameManager.Instance.LocalPlayer.PlayerState.WeaponState == PlayerState.EWeaponState.AIMEDFIRING;
 		
 		IsInCover = GameManager.Instance.LocalPlayer.PlayerState.MoveState == PlayerState.EMoveState.COVER;
+
+		Reload = Player.WeaponController.ActiveWeapon.Reloader.IsReloading;
 	}
 }

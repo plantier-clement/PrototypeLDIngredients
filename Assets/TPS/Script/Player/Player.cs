@@ -17,7 +17,7 @@ public class Player : MonoBehaviour {
 	}
 
 	[SerializeField] MouseInput MouseControl;
-	[SerializeField] AudioController footsteps;
+	[SerializeField] AudioControllerRandom footsteps;
 	[SerializeField] float minimumMoveThreshold;
 
 	public SwatSoldier Settings;
@@ -25,9 +25,9 @@ public class Player : MonoBehaviour {
 	public bool IsLocalPlayer;
 
 
-
 	InputController playerInput;
 	Vector2 mouseInput;
+
 
 	private CharacterController m_MoveController;
 	public CharacterController MoveController{

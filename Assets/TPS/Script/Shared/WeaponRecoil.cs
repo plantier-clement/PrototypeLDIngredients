@@ -26,6 +26,9 @@ public class WeaponRecoil : MonoBehaviour {
 	[SerializeField]
 	float recoilStrength;
 
+	[SerializeField]
+	float recoilCamOffset;
+
 	float nextRecoilCooldown;
 	float recoilActiveTime;
 
@@ -50,6 +53,17 @@ public class WeaponRecoil : MonoBehaviour {
 	}
 
 
+	PlayerAim m_PlayerAim;
+	PlayerAim PlayerAim
+	{
+		get {
+			if(m_PlayerAim == null)
+				m_PlayerAim = GameManager.Instance.LocalPlayer.GetComponentInChildren <PlayerAim> ();
+			return m_PlayerAim;
+		}
+	}
+
+
 	void Update(){
 		if (nextRecoilCooldown > Time.time) {
 			// holding fire button
@@ -64,7 +78,7 @@ public class WeaponRecoil : MonoBehaviour {
 
 			this.Shooter.AimTargetOffset = Vector3.Lerp (Shooter.AimTargetOffset, Shooter.AimTargetOffset + recoilAmount, recoilStrength * Time.deltaTime);
 			this.Crosshair.ApplyScale (percentage * Random.Range (recoilStrength * 7, recoilStrength * 9));
-
+			this.PlayerAim.SetRotation (recoilCamOffset);
 
 		} else {
 			// not holding fire button
@@ -74,7 +88,7 @@ public class WeaponRecoil : MonoBehaviour {
 
 			this.Crosshair.ApplyScale (GetPercentage ());
 
-
+			// reset
 			if (recoilActiveTime == 0) {
 				this.Shooter.AimTargetOffset = Vector3.zero;
 				this.Crosshair.ApplyScale (0);
