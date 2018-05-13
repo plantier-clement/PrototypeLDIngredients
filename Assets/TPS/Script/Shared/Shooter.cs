@@ -8,7 +8,8 @@ public class Shooter : MonoBehaviour {
 	[SerializeField] Projectile projectile;
 	[SerializeField] public Transform hand;
 	[SerializeField] AudioControllerRandom audioFire;
-
+	[SerializeField] GameObject BulletCase;
+	[SerializeField] float caseExpelForce;
 
 	[HideInInspector]
 	public Vector3 AimPoint;
@@ -21,9 +22,14 @@ public class Shooter : MonoBehaviour {
 	public bool CanFire;
 
 	Player player;
-	private ParticleSystem muzzleParticleSystem;
 	float nextFireAllowed;
+
 	Transform muzzle;
+	private ParticleSystem muzzleParticleSystem;
+
+	Transform bulletExtractor;
+	private ParticleSystem extractorParticleSystem;
+
 
 	private WeaponRecoil m_WeaponRecoil;
 	private WeaponRecoil WeaponRecoil{
@@ -36,10 +42,13 @@ public class Shooter : MonoBehaviour {
 
 
 	void Awake () {
-		muzzle = transform.Find ("Model/Muzzle");
-		Reloader = GetComponent<WeaponReloader> ();
-		muzzleParticleSystem = muzzle.GetComponent<ParticleSystem> ();
 		player = GetComponentInParent<Player> ();
+		Reloader = GetComponent<WeaponReloader> ();
+
+		muzzle = transform.Find ("Model/Muzzle");
+		bulletExtractor = transform.Find ("Model/BulletExtractor");
+		muzzleParticleSystem = muzzle.GetComponent <ParticleSystem> ();
+		extractorParticleSystem = bulletExtractor.GetComponent <ParticleSystem> ();
 	}
 
 
@@ -63,17 +72,38 @@ public class Shooter : MonoBehaviour {
 	public void Reload(){
 		if (Reloader == null)
 			return;
-		
 
 		if(player.IsLocalPlayer)
 			Reloader.Reload();
 	}
 
 
-	void FireEffect(){
+	void PlayMuzzleFlash(){
 		if (muzzleParticleSystem == null)
 			return;
 		muzzleParticleSystem.Play ();
+	}
+
+
+	void PlaySmokeEffect(){
+		if (extractorParticleSystem == null)
+			return;
+		extractorParticleSystem.Play ();
+	}
+
+
+	void PlayBulletCaseEffect(){
+		GameObject newCase =   Instantiate (BulletCase, bulletExtractor.position, bulletExtractor.rotation);
+		Rigidbody rb = newCase.GetComponent<Rigidbody>();
+		rb.AddForce(bulletExtractor.transform.forward * caseExpelForce);
+	}
+
+
+	public virtual void PlayFireEffects(){
+		PlayMuzzleFlash ();
+		audioFire.Play ();
+		PlayBulletCaseEffect ();
+		PlaySmokeEffect ();
 	}
 
 
@@ -104,8 +134,7 @@ public class Shooter : MonoBehaviour {
 		if (this.WeaponRecoil)
 			this.WeaponRecoil.Activate ();
 			
-		FireEffect ();
-		audioFire.Play ();
+		PlayFireEffects ();
 		CanFire = true;
 	}
 

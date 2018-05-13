@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class Shotgun : Shooter {
 
-	public override void Fire ()
-	{
-		base.Fire ();
-		if (CanFire) {
 
-		}
+	public override void PlayFireEffects ()
+	{
+		base.PlayFireEffects ();
 	}
 }
