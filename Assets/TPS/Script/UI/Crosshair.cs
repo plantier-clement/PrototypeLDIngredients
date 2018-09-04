@@ -7,6 +7,7 @@ public class Crosshair : MonoBehaviour {
 	[SerializeField]
 	float speed;
 
+	[HideInInspector]
 	public Transform Reticle;
 
 	Transform crossTop;
@@ -46,13 +47,11 @@ public class Crosshair : MonoBehaviour {
 
 
 	void SetVisibility (bool value){
-
 		Reticle.gameObject.SetActive (value);
 	}
 
 
 	public void ApplyScale(float scale){
-	
 		crossTop.localPosition = new Vector3 (0, reticleStartPoint + scale, 0);
 		crossBottom.localPosition = new Vector3 (0, -reticleStartPoint - scale, 0);
 		crossLeft.localPosition = new Vector3 (-reticleStartPoint - scale, 0, 0);

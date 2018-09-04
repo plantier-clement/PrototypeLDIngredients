@@ -136,6 +136,4 @@ public class Player : MonoBehaviour {
 
 		playerAim.SetRotation (mouseInput.y * MouseControl.Sensitivity.y);
 	}
-
-
 }

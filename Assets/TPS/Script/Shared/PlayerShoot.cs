@@ -5,9 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Player))]
 public class PlayerShoot : WeaponController {
 
-
 	bool IsPlayerAlive = true;
 	Player player;
+
 
 	void Start(){
 
@@ -17,21 +17,15 @@ public class PlayerShoot : WeaponController {
 	}
 
 
-	private void PlayerHealth_OnDeath(){
-
-		IsPlayerAlive = false;
-	}
-
-
 	void Update(){
 
 		if (!player.IsLocalPlayer && IsPlayerAlive) {
 		
 			if (player.InputState.Fire1) {
 				ActiveWeapon.Fire ();
-			}
+			} 
 		}
-
+	
 
 		if (!IsPlayerAlive || GameManager.Instance.IsPaused)
 			return;
@@ -57,7 +51,12 @@ public class PlayerShoot : WeaponController {
 
 			if (player.InputState.Reload)
 				ActiveWeapon.Reload ();
-
 		}
+	}
+
+
+	private void PlayerHealth_OnDeath(){
+
+		IsPlayerAlive = false;
 	}
 }

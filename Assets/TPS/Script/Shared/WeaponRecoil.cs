@@ -11,26 +11,28 @@ public class WeaponRecoil : MonoBehaviour {
 	{
 		public AnimationCurve curve;
 		public Vector3 direction;
-
 	}
 
-	[SerializeField]
-	Layer[] layers;
 
-	[SerializeField]
-	float recoilSpeed;
+	[System.Serializable]
+	public class CrosshairSettings {
+		public float MaxSpread;
+		public float SpeedToMaxSpread;
+		public float SpeedToMinSpread;
+	}
 
-	[SerializeField]
-	float recoilCooldown;
-
-	[SerializeField]
-	float recoilStrength;
-
-	[SerializeField]
-	float recoilCamOffset;
+	[SerializeField] Layer[] layers;
+	[SerializeField] CrosshairSettings CrosshairWhileRunning;
+	[SerializeField] CrosshairSettings CrosshairWhileCrouching;
+	[SerializeField] CrosshairSettings CrosshairWhileLooking;
+	[SerializeField] float recoilCooldown;
+	[SerializeField] float recoilCamOffset;
 
 	float nextRecoilCooldown;
 	float recoilActiveTime;
+	float startingOrientation;
+	bool recoilActive = false;
+
 
 	Shooter m_Shooter;
 	Shooter Shooter
@@ -63,48 +65,98 @@ public class WeaponRecoil : MonoBehaviour {
 		}
 	}
 
+	PlayerState m_PlayerState;
+	PlayerState PlayerState
+	{
+		get {
+			if(m_PlayerState == null)
+				m_PlayerState = GameManager.Instance.LocalPlayer.GetComponentInChildren <PlayerState> ();
+			return m_PlayerState;
+		}
+	}
+
+	private InputController m_PlayerInput;
+	public InputController PlayerInput {
+		get { 
+			if (m_PlayerInput == null)
+				m_PlayerInput = GameManager.Instance.InputController;
+			return m_PlayerInput;
+		}
+	}
+
 
 	void Update(){
-		if (nextRecoilCooldown > Time.time) {
-			// holding fire button
 
-			recoilActiveTime += Time.deltaTime;
-			float percentage = GetPercentage ();
-	
+		float maxSpread;
+		float speedToMaxSpread;
+		float speedToMinSpread;
 
-			Vector3 recoilAmount = Vector3.zero;
-			for (int i = 0; i < layers.Length; i++)
-				recoilAmount += layers [i].direction * layers [i].curve.Evaluate (percentage);
 
-			this.Shooter.AimTargetOffset = Vector3.Lerp (Shooter.AimTargetOffset, Shooter.AimTargetOffset + recoilAmount, recoilStrength * Time.deltaTime);
-			this.Crosshair.ApplyScale (percentage * Random.Range (recoilStrength * 7, recoilStrength * 9));
-			this.PlayerAim.SetRotation (recoilCamOffset);
+		float camSpread = 0.0f;;
+		float moveSpread;
 
-		} else {
-			// not holding fire button
-			recoilActiveTime -= Time.deltaTime;
-			if (recoilActiveTime < 0)
-				recoilActiveTime = 0;
+		// conditions
+		moveSpread = CrosshairWhileRunning.MaxSpread;
+		speedToMaxSpread = CrosshairWhileRunning.SpeedToMaxSpread;
+		speedToMinSpread = CrosshairWhileRunning.SpeedToMinSpread;
 
-			this.Crosshair.ApplyScale (GetPercentage ());
+			
+		if (this.PlayerState.MoveState == PlayerState.EMoveState.CROUCHING) {
+			moveSpread = CrosshairWhileCrouching.MaxSpread;
+			speedToMaxSpread = CrosshairWhileCrouching.SpeedToMaxSpread;
+			speedToMinSpread = CrosshairWhileCrouching.SpeedToMinSpread;
+		}
 
-			// reset
-			if (recoilActiveTime == 0) {
-				this.Shooter.AimTargetOffset = Vector3.zero;
-				this.Crosshair.ApplyScale (0);
+		if (PlayerInput.MouseInput != Vector2.zero) {
+			camSpread = CrosshairWhileLooking.MaxSpread;
+		}
+
+		maxSpread = moveSpread + camSpread;
+
+		if(recoilActive) {
+			if (nextRecoilCooldown > Time.time) {
+				// holding fire button
+				recoilActiveTime += Time.deltaTime; 
+				recoilActiveTime = Mathf.Clamp (recoilActiveTime, 0f, 0.8f);
+				print (recoilActiveTime);
+
+				Vector3 recoilAmount = Vector3.zero;
+				for (int i = 0; i < layers.Length; i++)
+					recoilAmount += layers [i].direction * layers [i].curve.Evaluate (GetPercentage (speedToMaxSpread));
+
+			//	this.Shooter.AimTargetOffset = Vector3.Lerp (Shooter.AimTargetOffset, Shooter.AimTargetOffset + recoilAmount, recoilStrength * Time.deltaTime);
+				this.Crosshair.ApplyScale (GetPercentage (speedToMaxSpread) * maxSpread);
+				this.PlayerAim.SetRotation (recoilCamOffset);
+
+			} else {
+				// not holding fire button
+
+				print (recoilActiveTime);
+				recoilActiveTime -= Time.deltaTime;
+
+				this.Crosshair.ApplyScale (GetPercentage (speedToMinSpread) * maxSpread);
+
+				if (recoilActiveTime < 0)
+					recoilActiveTime = 0;
+				// reset
+				if (recoilActiveTime == 0) {
+				//	this.Shooter.AimTargetOffset = Vector3.zero;
+					this.Crosshair.ApplyScale (0);
+					recoilActive = false;
+				}
 			}
 		}
-	
 	}
 
 
 	public void Activate (){
 		nextRecoilCooldown = Time.time + recoilCooldown;
+		recoilActive = true;
 	}
 
 
-	float GetPercentage(){
-		float percentage = recoilActiveTime / recoilSpeed;
+	float GetPercentage(float speed){
+		float percentage = recoilActiveTime / speed;
 		return Mathf.Clamp01 (percentage);
 	
 	}

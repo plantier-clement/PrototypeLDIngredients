@@ -25,7 +25,6 @@ public class PlayerMove : MonoBehaviour {
 				m_MoveController = GetComponent <CharacterController> ();
 			return m_MoveController;
 		}
-
 	}
 
 

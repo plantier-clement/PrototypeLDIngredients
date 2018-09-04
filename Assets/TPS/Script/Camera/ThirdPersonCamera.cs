@@ -21,25 +21,14 @@ public class ThirdPersonCamera : MonoBehaviour {
 	public float CamCollOffsetZ = 0.2f;
 
 
-
-
-
 	Transform cameraLookTarget;
 	Player localPlayer;
-
 
 
 	void Awake () {
 		GameManager.Instance.OnLocalPlayerJoined += HandleOnLocalPlayerJoined;
 	}
 
-	void HandleOnLocalPlayerJoined (Player player)	{
-		localPlayer = player;
-		cameraLookTarget = localPlayer.transform.Find ("AimingPivot");
-
-		if (cameraLookTarget == null)
-			cameraLookTarget = localPlayer.transform;
-	}
 
 	void LateUpdate (){
 		if (localPlayer == null)
@@ -78,10 +67,16 @@ public class ThirdPersonCamera : MonoBehaviour {
 		if (Physics.Linecast (toTarget, fromTarget, out hit)) {
 			Vector3 hitPoint = new Vector3 (hit.point.x + hit.normal.x * CamCollOffsetX, hit.point.y, hit.point.z + hit.normal.z * CamCollOffsetZ);
 			fromTarget = new Vector3 (hitPoint.x, fromTarget.y, hitPoint.z);
-
 		}
-	
 	}
 
+
+	void HandleOnLocalPlayerJoined (Player player)	{
+		localPlayer = player;
+		cameraLookTarget = localPlayer.transform.Find ("AimingPivot");
+
+		if (cameraLookTarget == null)
+			cameraLookTarget = localPlayer.transform;
+	}
 }
 

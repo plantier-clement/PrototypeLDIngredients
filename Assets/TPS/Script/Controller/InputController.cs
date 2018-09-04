@@ -41,8 +41,6 @@ public class InputController : MonoBehaviour {
 	public bool Escape;
 
 
-
-
 	void Start (){
 	
 		State = new InputState ();

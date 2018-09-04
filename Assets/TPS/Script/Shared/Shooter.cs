@@ -17,6 +17,8 @@ public class Shooter : MonoBehaviour {
 	public Vector3 AimTargetOffset;
 	[HideInInspector]
 	public WeaponReloader Reloader;
+	[HideInInspector]
+	public float StartingOrientation;
 
 	[HideInInspector]
 	public bool CanFire;
@@ -40,6 +42,16 @@ public class Shooter : MonoBehaviour {
 		}
 	}
 
+	PlayerAim m_PlayerAim;
+	PlayerAim PlayerAim
+	{
+		get {
+			if(m_PlayerAim == null)
+				m_PlayerAim = GameManager.Instance.LocalPlayer.GetComponentInChildren <PlayerAim> ();
+			return m_PlayerAim;
+		}
+	}
+
 
 	void Awake () {
 		player = GetComponentInParent<Player> ();
@@ -52,8 +64,35 @@ public class Shooter : MonoBehaviour {
 	}
 
 
-	public void SetAimPoint(Vector3 target){
-		AimPoint = target;
+	public virtual void Fire(){
+
+		CanFire = false;
+		if (Time.time < nextFireAllowed)
+			return;
+
+		if (player.IsLocalPlayer && Reloader != null) {
+			
+			if (Reloader.IsReloading)
+				return;
+			
+			if (Reloader.RoundsRemainingInClip == 0)
+				return;
+			
+			Reloader.TakeFromClip (1);
+		}
+
+		nextFireAllowed = Time.time + rateOfFire;
+
+		muzzle.LookAt (AimPoint + AimTargetOffset);
+		Projectile newBullet = Instantiate (projectile, muzzle.position, muzzle.rotation);
+
+
+		if (this.WeaponRecoil)
+			this.WeaponRecoil.Activate ();
+			
+		PlayFireEffects ();
+		CanFire = true;
+
 	}
 
 
@@ -67,7 +106,7 @@ public class Shooter : MonoBehaviour {
 	void OnDisable(){
 		//
 	}
-		
+
 
 	public void Reload(){
 		if (Reloader == null)
@@ -103,39 +142,11 @@ public class Shooter : MonoBehaviour {
 		PlayMuzzleFlash ();
 		audioFire.Play ();
 		PlayBulletCaseEffect ();
-		PlaySmokeEffect ();
+		//	PlaySmokeEffect ();
 	}
 
 
-	public virtual void Fire(){
-
-		CanFire = false;
-
-		if (Time.time < nextFireAllowed)
-			return;
-
-		if (player.IsLocalPlayer && Reloader != null) {
-			
-			if (Reloader.IsReloading)
-				return;
-			
-			if (Reloader.RoundsRemainingInClip == 0)
-				return;
-			
-			Reloader.TakeFromClip (1);
-		}
-
-		nextFireAllowed = Time.time + rateOfFire;
-
-		muzzle.LookAt (AimPoint + AimTargetOffset);
-		Projectile newBullet = Instantiate (projectile, muzzle.position, muzzle.rotation);
-
-
-		if (this.WeaponRecoil)
-			this.WeaponRecoil.Activate ();
-			
-		PlayFireEffects ();
-		CanFire = true;
+	public void SetAimPoint(Vector3 target){
+		AimPoint = target;
 	}
-
 }

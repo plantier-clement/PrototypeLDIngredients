@@ -41,18 +41,15 @@ public class PlayerState : MonoBehaviour {
 
 	void CoverToggle(){
 		isInCover = !isInCover;
-
 	}
 
 	void Update (){
-
 		SetMoveState ();
 		SetWeaponState ();
-		
 	}
 
 	void SetWeaponState(){						
-		WeaponState = EWeaponState.IDLE; 
+		WeaponState = EWeaponState.IDLE;
 
 		if (InputController.Fire1)
 			WeaponState = EWeaponState.FIRING;

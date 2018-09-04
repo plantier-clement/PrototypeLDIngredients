@@ -25,7 +25,6 @@ public class WeaponController : MonoBehaviour {
 	}
 
 
-
 	void Awake(){
 		CanFire = true;
 		weaponHolster = transform.Find ("Weapons");
@@ -49,14 +48,11 @@ public class WeaponController : MonoBehaviour {
 	}
 
 
-
 	void DeactivateWeapons(){
 		for (int i = 0; i < weapons.Length; i++) {
 			weapons [i].gameObject.SetActive (false);
 			weapons [i].transform.SetParent (weaponHolster);
-
 		}
-
 	}
 
 
@@ -77,6 +73,7 @@ public class WeaponController : MonoBehaviour {
 
 	}
 
+
 	internal void Equip(int index){
 		DeactivateWeapons ();
 		CanFire = true;
@@ -87,5 +84,4 @@ public class WeaponController : MonoBehaviour {
 		if (OnWeaponSwitch != null)
 			OnWeaponSwitch (m_ActiveWeapon);
 	}
-
 }

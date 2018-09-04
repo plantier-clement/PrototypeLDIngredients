@@ -5,8 +5,6 @@ using UnityEngine;
 public class PlayerAim : MonoBehaviour {
 
 
-
-
 	[SerializeField]
 	float clampMinAngle = -45.0f;
 
